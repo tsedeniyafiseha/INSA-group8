@@ -1,23 +1,21 @@
+
 {
-  "name": "Smart Campus Navigator & Assistant System",
+  "name": "SCNAS",
   "short_name": "SCNAS",
-  "description": "A smart web app to help students and staff navigate campus easily.",
+  "description": "SCNAS Campus Navigation and Services",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#0f172a",
+  "theme_color": "#10b981",
   "icons": [
     {
-      "src": "/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
     }
   ]
 }
+
+
 
 
