@@ -58,3 +58,11 @@ exports.login = (req, res) => {
     });
 };
 
+exports.profile = (req, res) => {
+     return res.status(200).json({
+        msg: 'this is protected profile route', 
+        userId: req.user.id
+    });
+};
+
+

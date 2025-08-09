@@ -9,12 +9,28 @@ const db = new sqlite3.Database(path.resolve(__dirname, 'database.sqlite'), (err
     console.log('database connected successfully');
 });
 
-db.run (`
-    CREATE TABLE IF NOT EXISTS users(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT UNIQUE,
-        password TEXT 
-    ) 
-`);
+
+db.serialize(() => {
+    db.run (`
+        CREATE TABLE IF NOT EXISTS users(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE,
+            password TEXT 
+        )
+    `);
+    
+    db.run(`  
+        CREATE TABLE IF NOT EXISTS schedule(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            title TEXT,
+            date DATE,
+            start_time TEXT,
+            end_time TEXT,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+    `);
+});
+
 
 module.exports = db;
