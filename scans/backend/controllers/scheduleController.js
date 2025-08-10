@@ -23,9 +23,9 @@ exports.readSchedule = (req, res) => {
 
     const user_id = req.user.id;
     
-    selectQuery = `SELECT * FROM schedule WHERE user_id = ?`;
+    const checkQuery = `SELECT * FROM schedule WHERE user_id = ?`;
 
-    db.all(selectQuery, [user_id], function(err, rows){
+    db.all(checkQuery, [user_id], function(err, rows){
         if(err){
             return res.status(500).json({msg: 'database error'});
         }
@@ -88,6 +88,5 @@ exports.deleteSchedule = (req, res) => {
         });
     });
 };
-
 
 
