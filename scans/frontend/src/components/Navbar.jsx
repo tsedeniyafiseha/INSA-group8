@@ -15,19 +15,21 @@ const Header = () => {
   const location = useLocation();
 
   const linkClasses = ({ isActive }) =>
-    `flex items-center gap-2 px-3 py-2 rounded transition-colors duration-200 ${
-      isActive
-        ? "bg-gray-200 text-emerald-500"
-        : "text-gray-800 hover:text-emerald-500"
-    }`;
+  `font-poppins flex items-center gap-2 px-3 py-2 rounded transition-colors duration-200 ${
+    isActive
+      ? "bg-gray-200 text-emerald-500"
+      : "text-gray-900 hover:text-emerald-500"
+  }`;
 
-  // For the Sign Up button, check if the current path is "/signup" and apply active style conditionally
+
+
+  
   const isSignUpActive = location.pathname === "/signup";
 
   return (
-    <header className="bg-white shadow-sm">
+    <header className="bg-gray-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-        {/* Logo */}
+        {}
         <NavLink
           to="/"
           className="flex items-center gap-2 font-bold rounded-lg shadow-md p-1"
@@ -39,15 +41,15 @@ const Header = () => {
             height="27"
             className="rounded-md shadow-sm"
           />
-          {/* Match SCNAS font size roughly to logo height */}
-          <span className="shadow-sm" style={{ fontSize: "27px", lineHeight: 1 }}>
-            <span style={{ color: "#1f2937" }}></span>
+          {}
+          <span className="shadow-sm"  style={{ fontSize: "27px", lineHeight: 1 ,  }}>
+            <span style={{ color: "#1f2937"  }}></span>
 
             SCNAS
           </span>
         </NavLink>
 
-        {/* Nav Links */}
+        {}
         <nav>
           <ul className="flex items-center gap-4">
             <li>

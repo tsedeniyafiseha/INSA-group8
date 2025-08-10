@@ -1,15 +1,25 @@
 import React from 'react';
-import Navbar from './components/Navbar';  // Adjust path if needed
+import Navbar from './components/Navbar';
+import Footer from "./components/Footer";
+import './index.css'
 
 function App() {
   return (
-    <div>
+    <div className="flex flex-col min-h-screen">
+      {}
       <Navbar />
-      <div style={{ padding: '2rem', textAlign: 'center' }}>
+
+      {}
+      <main className="flex-grow p-8 text-center">
         <p></p>
-      </div>
+        {}
+      </main>
+
+      {}
+      <Footer />
     </div>
   );
 }
 
 export default App;
+

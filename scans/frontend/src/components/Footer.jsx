@@ -1,132 +1,182 @@
-// Footer.jsx
-import React from 'react';
-import { Link } from 'react-router-dom';
-import logo from './icon-192.png'; // Make sure to have your logo in src
+import React from "react";
+import { NavLink } from "react-router-dom";
+import {
+  FaPhone,
+  FaMobileAlt,
+  FaPooStorm,
+  FaEnvelope,
+  FaLink,
+  FaFacebookF,
+  FaYoutube,
+  FaLinkedinIn,
+} from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 
-const Footer = () => {
-  // Style objects
-  const styles = {
-    footer: {
-      backgroundColor: 'white',
-      padding: '1rem 0',
-      borderTop: '1px solid #e5e7eb',
-      fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-    },
-    content: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      maxWidth: '1200px',
-      margin: '0 auto',
-      padding: '0 1rem',
-    },
-    logo: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '0.5rem',
-      textDecoration: 'none',
-      color: '#1f2937',
-      fontWeight: 'bold',
-      fontSize: '1.1rem',
-    },
-    navList: {
-      display: 'flex',
-      listStyle: 'none',
-      gap: '1.5rem',
-      margin: '0',
-      padding: '0',
-    },
-    navLink: {
-      textDecoration: 'none',
-      color: '#4b5563',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '0.3rem',
-      transition: 'color 0.2s',
-      fontSize: '0.95rem',
-    },
-    icon: {
-      fontSize: '0.9rem',
-    },
-    // Media query styles
-    '@media (max-width: 768px)': {
-      content: {
-        flexDirection: 'column',
-        gap: '1rem',
-      },
-      navList: {
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-        gap: '1rem',
-      },
-    },
-  };
-
-  // Apply media queries (this is a simple approach)
-  const applyMediaQueries = () => {
-    if (window.innerWidth <= 768) {
-      return {
-        ...styles.content,
-        flexDirection: 'column',
-        gap: '1rem',
-      };
-    }
-    return styles.content;
-  };
+function Footer() {
+  const navLinks = [
+    { label: "Home", href: "/" },
+    { label: "Campus Map", href: "/campus-map" },
+    { label: "Schedule", href: "/schedule" },
+    { label: "Booking", href: "/bookings" },
+    { label: "Lost & Found", href: "/lost-found" },
+  ];
 
   return (
-    <footer style={styles.footer}>
-      <div style={applyMediaQueries()}>
-        <div className="footer-logo">
-          <Link to="/" style={styles.logo}>
-            <img src={logo} alt="SC NAS Logo" width="30" height="30" />
-            <span>SC NAS</span>
-          </Link>
+    <footer className="bg-gray-900 text-white font-semibold">
+      {}
+      <div className="max-w-6xl mx-auto px-4 py-8 text-center">
+        <h2 className="text-2xl md:text-3xl font-bold mb-4">
+          Your guide to AASTU campus life!
+        </h2>
+      </div>
+
+      {}
+      <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-10 mb-8">
+        {}
+        <div className="space-y-4 text-left">
+          <h3 className="text-lg font-bold mb-3 font-poppins">
+            Contact Information
+          </h3>
+          <div className="flex items-center space-x-3">
+            <FaPhone className="w-5 h-5 tex-white" />
+            <a
+              href="#"
+              className="text-blue-400 transition-colors font-Roboto"
+            >
+              Tel: +251 911 123 456
+            </a>
+          </div>
+          <div className="flex items-center space-x-3">
+            <FaMobileAlt className="w-5 h-5 text-white" />
+            <a
+              href="#"
+              className="text-blue-400 transition-colors font-roboto"
+            >
+              Mob: +251 911 123 456
+            </a>
+          </div>
+          <div className="flex items-center space-x-3">
+            <FaPooStorm className="w-5 h-5 text-white" />
+            <a
+              href="#"
+              className="text-blue-400 transition-colors font-roboto"
+            >
+              P.O.BOX: 16417
+            </a>
+          </div>
+          <div className="flex items-center space-x-3">
+            <FaEnvelope className="w-5 h-5" />
+            <a
+              href="#"
+              className="text-blue-400 transition-colors font-roboto"
+            >
+              info@aastu.edu.et
+            </a>
+          </div>
+          <div className="flex items-center space-x-3">
+            <FaLink className="w-5 h-5" />
+            <a
+              href="#"
+              className="text-blue-400 transition-colors font-roboto"
+            >
+              www.aastu.edu.et
+            </a>
+          </div>
         </div>
-        
-        <nav>
-          <ul style={styles.navList}>
-            <li>
-              <Link to="/" style={styles.navLink}>
-                <i className="fas fa-home" style={{ ...styles.icon, color: '#2563eb' }}></i>
-                Home
-              </Link>
+
+        {}
+        <div className="space-y-4 text-left">
+          <h3 className="text-lg font-bold mb-3 font-poppins">Quick Links</h3>
+          <ul className="space-y-2 font-roboto">
+            {navLinks.map(({ label, href }) => (
+              <li key={label}>
+                <NavLink
+                  to={href}
+                  end={href === "/"}
+                  className={({ isActive }) =>
+                    `transition-colors ${
+                      isActive
+                        ? "text-emerald-500"
+                        : "text-blue-400 hover:text-emerald-500"
+                    }`
+                  }
+                >
+                  {label}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {}
+        <div className="space-y-4 text-left">
+          <h3 className="text-lg font-bold mb-3 font-poppins">
+            Connect With AASTU
+          </h3>
+          <ul className="space-y-3">
+            <li className="flex items-center space-x-3">
+              <FaFacebookF className="text-2xl text-white " />
+              <a href="#" className="text-blue-400 transition-colors font-roboto">
+                Facebook
+              </a>
             </li>
-            <li>
-              <Link to="/campus-map" style={styles.navLink}>
-                <i className="fas fa-map" style={{ ...styles.icon, color: '#10b981' }}></i>
-                Campus Map
-              </Link>
+            <li className="flex items-center space-x-3">
+              <FaXTwitter className="text-2xl text-white " />
+              <a href="#" className="text-blue-400 font-roboto">
+                X
+              </a>
             </li>
-            <li>
-              <Link to="/schedule" style={styles.navLink}>
-                <i className="fas fa-calendar-alt" style={{ ...styles.icon, color: '#2563eb' }}></i>
-                Schedule
-              </Link>
+            <li className="flex items-center space-x-3">
+              <FaYoutube className="text-2xl text-white " />
+              <a href="#" className="text-blue-400 font-roboto">
+                YouTube
+              </a>
             </li>
-            <li>
-              <Link to="/bookings" style={styles.navLink}>
-                <i className="fas fa-book" style={{ ...styles.icon, color: '#10b981' }}></i>
-                Bookings
-              </Link>
-            </li>
-            <li>
-              <Link to="/lost-found" style={styles.navLink}>
-                <i className="fas fa-search" style={{ ...styles.icon, color: '#2563eb' }}></i>
-                Lost & Found
-              </Link>
-            </li>
-            <li>
-              <Link to="/signin" style={styles.navLink}>
-                <i className="fas fa-sign-in-alt" style={{ ...styles.icon, color: '#10b981' }}></i>
-                Sign in
-              </Link>
+            <li className="flex items-center space-x-3">
+              <FaLinkedinIn className="text-2xl text-white " />
+              <a href="#" className="text-blue-400 font-roboto">
+                LinkedIn
+              </a>
             </li>
           </ul>
-        </nav>
+        </div>
+      </div>
+
+      {}
+      <div className="bg-gray-900 py-6 flex justify-center mb-8 ">
+        <div className="flex w-full max-w-md ">
+          <input
+            type="email"
+            placeholder="Enter your email here..."
+            className="flex-grow px-4 py-2 rounded-l-full focus:outline-none bg-gray-200 text-gray-900 font-roboto"
+          />
+          <button className="bg-green-500 px-6 py-2 rounded-r-full hover:bg-green-600 transition-colors font-bold font-poppins text-white">
+            Join
+          </button>
+        </div>
+      </div>
+
+      {}
+      <div className="bg-gray-200 w-full">
+        <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between text-gray-900 text-sm py-4">
+          <div className="flex items-center mb-3 md:mb-0 font-roboto">
+            <p>
+              2017 E.C Addis Ababa Science and Technology University (AASTU) Addis
+              Ababa, Ethiopia
+            </p>
+          </div>
+          <div className="flex items-center">
+            <img
+              src="icons/favicon.ico"
+              alt="SCNAS | Smart Campus Navigator and Assistant System"
+              className="w-6 h-6 mr-2 font-roboto"
+            />
+            <span>SCNAS | Smart Campus Navigator and Assistant System</span>
+          </div>
+        </div>
       </div>
     </footer>
   );
-};
+}
 
 export default Footer;
