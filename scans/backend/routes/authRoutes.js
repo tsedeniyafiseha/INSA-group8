@@ -8,9 +8,11 @@ const authMiddleware = require('../middleware/authMiddleware');
 
 const {profile} = require('../controllers/authController');
 
+const loginLimiter = require('../middleware/rateLimiter');
+
 router.post('/register', register);
 
-router.post('/login', login);
+router.post('/login', loginLimiter, login);
 
 router.get('/profile', authMiddleware, profile);
 

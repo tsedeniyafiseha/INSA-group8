@@ -15,7 +15,10 @@ db.serialize(() => {
         CREATE TABLE IF NOT EXISTS users(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE,
-            password TEXT 
+            email TEXT UNIQUE,
+            password TEXT,
+            role TEXT DEFAULT 'user',
+            created_at DATE
         )
     `, (err) => {
         if (err) console.error('Error creating users table:', err.message);
