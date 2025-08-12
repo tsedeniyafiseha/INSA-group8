@@ -5,26 +5,25 @@ import {
   faHome,
   faMapMarkerAlt,
   faCalendarAlt,
-  faBook,
+  faGraduationCap,
   faSearch,
   faSignInAlt,
   faUserPlus,
+  faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons";
 
 const Header = () => {
   const location = useLocation();
 
   const linkClasses = ({ isActive }) =>
-  `font-poppins flex items-center gap-2 px-3 py-2 rounded transition-colors duration-200 ${
-    isActive
-      ? "bg-gray-200 text-emerald-500"
-      : "text-gray-900 hover:text-emerald-500"
-  }`;
+    `font-poppins flex items-center gap-2 px-3 py-2 rounded transition-colors duration-200 ${
+      isActive
+        ? "bg-gray-200 text-emerald-500"
+        : "text-gray-900 hover:text-emerald-500"
+    }`;
 
-
-
-  
   const isSignUpActive = location.pathname === "/signup";
+  const isAboutActive = location.pathname === "/about";
 
   return (
     <header className="bg-gray-200 shadow-sm">
@@ -41,10 +40,7 @@ const Header = () => {
             height="27"
             className="rounded-md shadow-sm"
           />
-          {}
-          <span className="shadow-sm"  style={{ fontSize: "27px", lineHeight: 1 ,  }}>
-            <span style={{ color: "#1f2937"  }}></span>
-
+          <span className="shadow-sm" style={{ fontSize: "27px", lineHeight: 1 }}>
             SCNAS
           </span>
         </NavLink>
@@ -53,7 +49,7 @@ const Header = () => {
         <nav>
           <ul className="flex items-center gap-4">
             <li>
-              <NavLink to="/" className={linkClasses}>
+              <NavLink to="/" className={linkClasses} end>
                 <FontAwesomeIcon icon={faHome} />
                 Home
               </NavLink>
@@ -71,15 +67,15 @@ const Header = () => {
               </NavLink>
             </li>
             <li>
-              <NavLink to="/bookings" className={linkClasses}>
-                <FontAwesomeIcon icon={faBook} />
-                Bookings
+              <NavLink to="/faculty" className={linkClasses}>
+                <FontAwesomeIcon icon={faGraduationCap} />
+                Faculty
               </NavLink>
             </li>
             <li>
               <NavLink to="/lost-found" className={linkClasses}>
                 <FontAwesomeIcon icon={faSearch} />
-                Lost & Found
+                Lost &amp; Found
               </NavLink>
             </li>
             <li>
@@ -99,6 +95,19 @@ const Header = () => {
               >
                 <FontAwesomeIcon icon={faUserPlus} />
                 Sign Up
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/about"
+                className={`flex items-center gap-2 px-3 py-2 rounded transition-colors duration-200 ${
+                  isAboutActive
+                    ? "bg-gray-200 text-emerald-500"
+                    : "text-gray-900 hover:text-emerald-500"
+                }`}
+              >
+                <FontAwesomeIcon icon={faInfoCircle} />
+                About
               </NavLink>
             </li>
           </ul>
