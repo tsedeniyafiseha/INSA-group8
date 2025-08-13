@@ -18,6 +18,7 @@ db.serialize(() => {
             email TEXT UNIQUE,
             password TEXT,
             role TEXT DEFAULT 'user',
+            verified INTEGER DEFAULT 0,
             created_at DATE
         )
     `, (err) => {
