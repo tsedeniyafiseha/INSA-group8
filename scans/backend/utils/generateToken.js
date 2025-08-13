@@ -8,7 +8,6 @@ const generateToken = (user) => {
     );
 };
 
-// New: generate email verification token (valid 1 day)
 const generateEmailVerificationToken = (email) => {
     return jwt.sign(
         { email }, 
@@ -17,8 +16,16 @@ const generateEmailVerificationToken = (email) => {
 
 };
 
+const generateResetToken = (email) => {
+    return jwt.sign(
+            { email },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' })
+};
+
 
 module.exports = {
     generateToken,
-    generateEmailVerificationToken  
+    generateEmailVerificationToken,
+    generateResetToken 
 };

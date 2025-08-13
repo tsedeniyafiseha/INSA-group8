@@ -1,7 +1,7 @@
 const db = require('../database/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const {generateToken, generateEmailVerificationToken} = require('../utils/generateToken');
+const {generateToken, generateEmailVerificationToken,  generateResetToken} = require('../utils/generateToken');
 const validator = require('validator');
 const {validateUsername, validateEmail, validatePassword} = require('../utils/validators');
 const nodemailer = require('nodemailer');
@@ -110,8 +110,8 @@ exports.verifyEmail = (req, res) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
         const email = decoded.email;
+        
         const updateQuery = `UPDATE users SET verified = 1 WHERE email = ?`;
         db.run(updateQuery, [email], function(err) {
             if (err) {
@@ -139,8 +139,8 @@ exports.login = (req, res) => {
         return res.status(400).json({msg: 'invalid email or username format'});
     }
 
-    const query = `SELECT * FROM users WHERE username = ? OR email = ?`;
-    db.get(query, [identifier, identifier], async (err, user) => {
+    const checkQuery = `SELECT * FROM users WHERE username = ? OR email = ?`;
+    db.get(checkQuery, [identifier, identifier], async (err, user) => {
         if (err) {
             return res.status(500).json({ msg: 'database error' });
         }
@@ -212,5 +212,75 @@ exports.profile = (req, res) => {
     });
 };
 
+exports.forgotPassword = async (req, res) => {
+    const { email } = req.body;
 
+    if (!email) return res.status(400).json({ msg: 'Please provide your email' });
 
+    checkQuery = `SELECT * FROM users WHERE email = ?`;
+    db.get(checkQuery, [email], async (err, user) => {
+        if (err) return res.status(500).json({ msg: 'Database error' });
+        if (!user) return res.status(404).json({ msg: 'Email not found' });
+
+        
+        const resetToken = generateResetToken(user.email)
+
+        const resetUrl = `${process.env.BACKEND_URL}/api/auth/reset-password?token=${encodeURIComponent(resetToken)}`;
+
+        const transporter = nodemailer.createTransport({
+            host: "smtp.gmail.com",
+            port: 587,
+            secure: false,
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
+            }
+        });
+
+        await transporter.sendMail({
+            from: `"SCNAS Support" <${process.env.EMAIL_USER}>`,
+            to: email,
+            subject: 'Reset Your Password - SCNAS',
+            html: `<p>Click the link to reset your password:</p><a href="${resetUrl}" target="_blank">Reset Password</a>`
+        }).catch(err => console.error('Email sending failed:', err));
+
+        res.json({ msg: 'Password reset email sent. Check your inbox.' });
+    });
+};
+
+exports.resetPassword = async (req, res) => {
+    const { token } = req.query;
+    const { newPassword } = req.body;
+
+    if (!token) return res.status(400).json({ msg: 'Missing token' });
+    if (!newPassword) return res.status(400).json({ msg: 'Please provide a new password' });
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const email = decoded.email;
+
+        checkQuery = `SELECT password FROM users WHERE email = ?`;
+        db.get(checkQuery, [email], async (err, row) => {
+            if (err) return res.status(500).json({ msg: 'Database error' });
+            if (!row) return res.status(404).json({ msg: 'User not found' });
+
+            const currentHashedPassword = row.password;
+
+            const isSame = await bcrypt.compare(newPassword, currentHashedPassword);
+            if (isSame) {
+                return res.status(400).json({ msg: 'New password cannot be the same as your old password' });
+            }
+
+            const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+            updateQuery = `UPDATE users SET password = ? WHERE email = ?`
+            db.run(updateQuery, [hashedPassword, email], function(err) {
+                if (err) return res.status(500).json({ msg: 'Database error' });
+                res.json({ msg: 'Password has been reset successfully!' });
+            });
+        });
+
+    } catch (err) {
+        return res.status(400).json({ msg: 'Invalid or expired token' });
+    }
+};
