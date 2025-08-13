@@ -1,18 +1,21 @@
-const db = require('../database/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const {generateToken, generateEmailVerificationToken,  generateResetToken} = require('../utils/generateToken');
 const validator = require('validator');
+const User = require('../models/userModel');
+const {generateToken, generateEmailVerificationToken,  generateResetToken} = require('../utils/generateToken');
 const {validateUsername, validateEmail, validatePassword} = require('../utils/validators');
-const nodemailer = require('nodemailer');
+const {sendEmail}  = require('../utils/mailer');
+
 
 exports.register = async (req, res) => {
     let { username, email, password } = req.body;
 
     username = validator.escape(username);
     email = validator.normalizeEmail(email);
+    if (!validator.isEmail(email)) {
+        return res.status(400).json({ msg: 'Invalid email format' });
+    }
 
-    // Validate fields
     const usernameValidation = validateUsername(username);
     if (usernameValidation !== true) {
         return res.status(400).json({ msg: usernameValidation });
@@ -29,68 +32,38 @@ exports.register = async (req, res) => {
     }
 
     try {
-        const existingUser = await new Promise((resolve, reject) => {
-            checkQuery = `SELECT * FROM users WHERE username = ? OR email = ?`;
-            db.get(checkQuery, [username, email], (err, row) => 
-                (err ? reject(err) : resolve(row))
-            );
-        });
+        const existingUsername = await User.findUserByUsername(username);
+        if (existingUsername) return res.status(409).json({ msg: 'Username already exists' });
 
-        if (existingUser) {
-            if (existingUser.username === username) {
-                return res.status(409).json({ msg: 'Username already exists' });
-            }
-            if (existingUser.email === email) {
-                return res.status(409).json({ msg: 'Email already exists' });
-            }
-        }
+        const existingEmail = await User.findUserByEmail(email);
+        if (existingEmail) return res.status(409).json({ msg: 'Email already exists' });
+
 
         
         const hashedPassword = await bcrypt.hash(password, 10);
+        const role = 'user';
+        const createdAt = new Date().toISOString();
        
-        const userId = await new Promise((resolve, reject) => {
-            const insertQuery = `INSERT INTO users (username, email, password, role, created_at, verified) VALUES (?, ?, ?, ?, ?, 0)`
-            const role = 'user';
-            const createdAt = new Date().toISOString();
-            db.run(insertQuery, [username, email, hashedPassword, role, createdAt], function (err) {
-                    if (err) reject(err);
-                    else resolve(this.lastID);
-                }
-            );
-        });
-
-        
+        const userId = await User.createUser(username, email, hashedPassword, role, createdAt);
         const verificationToken = generateEmailVerificationToken(email);
-
-        
-        const transporter = nodemailer.createTransport({
-            host: "smtp.gmail.com",
-            port: 587,
-            secure: false, 
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS
-            },
-            connectionTimeout: 10000, 
-            greetingTimeout: 10000,
-            socketTimeout: 10000
-        });
-
-
 
         const verificationUrl = `${process.env.BACKEND_URL}/api/auth/verify-email?token=${encodeURIComponent(verificationToken)}`;
         
-        await transporter.sendMail({
-            from: `"SCNAS Support" <${process.env.EMAIL_USER}>`,
-            to: email,
-            subject: 'Verify Your Email - SCNAS',
-            html: `
-                <h2>Hello ${username},</h2>
-                <p>Thanks for registering at SCANS. Please click the link below to verify your email:</p>
-                <a href="${verificationUrl}" target="_blank">Verify Email</a>
-                <p>This link will expire in 24 hours.</p>
-            `,
-        }).catch (err => console.error("Email sending failed:", err));
+        try{
+            await sendEmail({
+                to: email,
+                subject: 'Verify Your Email - SCNAS',
+                html: `
+                    <h2>Hello ${username},</h2>
+                    <p>Thanks for registering at SCNAS. Please click the link below to verify your email:</p>
+                    <a href="${verificationUrl}" target="_blank">Verify Email</a>
+                    <p>This link will expire in 24 hours.</p>
+                `,
+            });
+        }catch(err){
+            console.error('Email sending failed:', err);
+            return res.status(500).json({ msg: 'Registration failed: could not send verification email' });
+        }
         
         return res.status(201).json({
             msg: 'User registered successfully! Please verify your email to activate your account.',
@@ -103,57 +76,58 @@ exports.register = async (req, res) => {
     }
 };
 
-exports.verifyEmail = (req, res) => {
+exports.verifyEmail = async (req, res) => {
     const token = req.query.token;
 
     if (!token) return res.status(400).json({ msg: 'Missing token' });
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const email = decoded.email;
-        
-        const updateQuery = `UPDATE users SET verified = 1 WHERE email = ?`;
-        db.run(updateQuery, [email], function(err) {
-            if (err) {
-                return res.status(500).json({ msg: 'Database error' });
-            }
-            if (this.changes === 0) {
+
+        const changes = await User.verifyEmail(decoded.email);
+            if (changes === 0) {
                 return res.status(404).json({ msg: 'User not found' });
             }
-            res.json({ msg: 'Email successfully verified! You can now login.' });
-        });
+            res.json({ msg: 'Email successfully verified!' });
     } catch (err) {
-        return res.status(400).json({ msg: 'Invalid or expired token' });
+        if (err.name === 'TokenExpiredError') {
+            return res.status(400).json({ msg: 'Token expired' });
+        }
+        return res.status(400).json({ msg: 'Invalid token' });
     }
 };
 
 
-exports.login = (req, res) => {
+exports.login = async (req, res) => {
     const { identifier, password } = req.body;
 
     if (!identifier || !password) {
         return res.status(400).json({ msg: 'Please provide username/email and password' });
     }
 
-    if(validateEmail(identifier) !== true && validateUsername(identifier) !== true){
-        return res.status(400).json({msg: 'invalid email or username format'});
+    let user = null;
+    let type = '';
+
+    if (validateEmail(identifier)) {
+        type = 'email';
+    } else if (validateUsername(identifier)) {
+        type = 'username';
+    } else {
+        return res.status(400).json({ msg: 'Invalid email or username format' });
     }
 
-    const checkQuery = `SELECT * FROM users WHERE username = ? OR email = ?`;
-    db.get(checkQuery, [identifier, identifier], async (err, user) => {
-        if (err) {
-            return res.status(500).json({ msg: 'database error' });
+    try {
+        if (type === 'email') {
+            user = await User.findUserByEmail(identifier);
+        } else {
+            user = await User.findUserByUsername(identifier);
         }
+
         if (!user) {
             return res.status(400).json({ msg: 'Invalid login credentials' });
         }
 
-        let isMatch = false;
-        try{
-            isMatch = await bcrypt.compare(password, user.password);
-        }catch(bcryptErr){
-            return res.status(500).json({ msg: 'Password verification failed' });
-        }
+        const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(401).json({ msg: 'Invalid login credentials' });
         }
@@ -162,17 +136,19 @@ exports.login = (req, res) => {
             return res.status(403).json({ msg: 'Please verify your email before logging in.' });
         }
 
-
         return res.status(200).json({
-            msg: 'login successfully',
+            msg: 'Login successfully',
             token: generateToken(user)
         });
-    });
+    } catch (err) {
+        console.error('Login error:', err);
+        return res.status(500).json({ msg: 'Database error' });
+    }
 };
 
-exports.updateAdmin = (req, res)=>{
+exports.updateAdmin = async (req, res) => {
     if(req.user.role !== 'main-admin'){
-        return res.status(403).json({success: false, msg: 'access denied: admin only'});
+        return res.status(403).json({success: false, msg: 'access denied: main-admin only'});
     }
 
     const id = req.params.id;
@@ -182,28 +158,35 @@ exports.updateAdmin = (req, res)=>{
         return res.status(400).json({ success: false, msg: 'Invalid role provided' });
     }
 
-    const checkUserQuery = `SELECT role FROM users WHERE id = ?`;
-    db.get(checkUserQuery, [id], (err, row) => {
-        if (err) {
-            return res.status(500).json({ success: false, msg: err.message });
-        }
-        if (!row) {
+    try{
+        const targetUser = await User.findById(id);
+        if (!targetUser) {
             return res.status(404).json({ success: false, msg: 'User not found' });
         }
-        if (row.role === role) {
+        if (targetUser.role === role) {
             return res.status(400).json({ success: false, msg: `User is already an ${role}` });
         }
 
-        
-        const updateQuery = `UPDATE users SET role = ? WHERE id = ?`;
-        db.run(updateQuery, [role, id], function(err){
-            if(err){
-                return res.status(500).json({msg: err.message});
+        if (targetUser.role === 'main-admin' && role !== 'main-admin') {
+            const allMainAdmins = await User.countByRole('main-admin');
+            if (allMainAdmins <= 1) {
+                return res.status(400).json({ 
+                    success: false, 
+                    msg: 'Cannot demote the last main-admin — you would lose admin access!' 
+                });
             }
-            res.json({msg: `user promoted to ${role} successfully`});
-        });
-    });
-}
+        }
+
+        
+        await User.updateUserRole(id, role);
+
+        console.log(`[ADMIN LOG] ${req.user.username} changed ${targetUser.username}'s role from ${targetUser.role} to ${role} at ${new Date().toISOString()}`);
+
+        res.json({msg: `user role updated to ${role} successfully`});
+    }catch(err) {
+       res.status(500).json({ msg: 'Database error' });
+    }
+};
 
 exports.profile = (req, res) => {
      return res.status(200).json({
@@ -213,39 +196,41 @@ exports.profile = (req, res) => {
 };
 
 exports.forgotPassword = async (req, res) => {
-    const { email } = req.body;
+    let { email } = req.body;
+    if (!email) {
+        return res.status(400).json({ msg: 'Please provide your email' });
+    }
 
-    if (!email) return res.status(400).json({ msg: 'Please provide your email' });
+    email = validator.normalizeEmail(email);
+    if (!validator.isEmail(email)) {
+        return res.status(400).json({ msg: 'Invalid email format' });
+    }
 
-    checkQuery = `SELECT * FROM users WHERE email = ?`;
-    db.get(checkQuery, [email], async (err, user) => {
-        if (err) return res.status(500).json({ msg: 'Database error' });
+    try{
+        const user = await User.findUserByEmail(email);
         if (!user) return res.status(404).json({ msg: 'Email not found' });
 
         
         const resetToken = generateResetToken(user.email)
-
         const resetUrl = `${process.env.BACKEND_URL}/api/auth/reset-password?token=${encodeURIComponent(resetToken)}`;
 
-        const transporter = nodemailer.createTransport({
-            host: "smtp.gmail.com",
-            port: 587,
-            secure: false,
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS
-            }
-        });
+        
+        try{
+            await sendEmail({
+                to: email,
+                subject: 'Reset Your Password - SCNAS',
+                html: `<p>Click the link to reset your password:</p><a href="${resetUrl}" target="_blank">Reset Password</a>`
+            })
+        }catch(emailErr){
+            console.error('Email sending failed:', emailErr);
+            return res.status(500).json({ msg: 'Failed to send password reset email. Please try again later.' });
+        } 
+        
+        return res.json({ msg: 'Password reset email sent. Check your inbox.' });
 
-        await transporter.sendMail({
-            from: `"SCNAS Support" <${process.env.EMAIL_USER}>`,
-            to: email,
-            subject: 'Reset Your Password - SCNAS',
-            html: `<p>Click the link to reset your password:</p><a href="${resetUrl}" target="_blank">Reset Password</a>`
-        }).catch(err => console.error('Email sending failed:', err));
-
-        res.json({ msg: 'Password reset email sent. Check your inbox.' });
-    });
+    } catch(err) {
+       res.status(500).json({ msg: 'Internal server error' });
+    }
 };
 
 exports.resetPassword = async (req, res) => {
@@ -257,30 +242,29 @@ exports.resetPassword = async (req, res) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const email = decoded.email;
+        const user = await User.findUserByEmail(decoded.email)
+            if (!user) return res.status(404).json({ msg: 'User not found' });
 
-        checkQuery = `SELECT password FROM users WHERE email = ?`;
-        db.get(checkQuery, [email], async (err, row) => {
-            if (err) return res.status(500).json({ msg: 'Database error' });
-            if (!row) return res.status(404).json({ msg: 'User not found' });
-
-            const currentHashedPassword = row.password;
+            const currentHashedPassword = user.password;
 
             const isSame = await bcrypt.compare(newPassword, currentHashedPassword);
             if (isSame) {
                 return res.status(400).json({ msg: 'New password cannot be the same as your old password' });
             }
 
+            const passwordValidation = validatePassword(newPassword);
+            if (passwordValidation !== true) {
+                return res.status(400).json({ msg: passwordValidation });
+            }
+
             const hashedPassword = await bcrypt.hash(newPassword, 10);
+            await User.updatePasswordByEmail(decoded.email, hashedPassword);
 
-            updateQuery = `UPDATE users SET password = ? WHERE email = ?`
-            db.run(updateQuery, [hashedPassword, email], function(err) {
-                if (err) return res.status(500).json({ msg: 'Database error' });
-                res.json({ msg: 'Password has been reset successfully!' });
-            });
-        });
-
+            return res.json({ msg: 'Password has been reset successfully!' });
     } catch (err) {
-        return res.status(400).json({ msg: 'Invalid or expired token' });
+         if (err.name === 'TokenExpiredError') {
+            return res.status(400).json({ msg: 'Token expired' });
+        }
+        return res.status(400).json({ msg: 'Invalid token' });
     }
 };
