@@ -10,6 +10,9 @@ const {sendEmail}  = require('../utils/mailer');
 exports.register = async (req, res) => {
     let { username, email, password } = req.body;
 
+    if (!username || !email || !password) {
+        return res.status(400).json({ msg: 'Username, email, and password are required' });
+    }
     username = validator.escape(username);
     email = validator.normalizeEmail(email);
     if (!validator.isEmail(email)) {
@@ -41,10 +44,6 @@ exports.register = async (req, res) => {
 
         
         const hashedPassword = await bcrypt.hash(password, 10);
-        const role = 'user';
-        const createdAt = new Date().toISOString();
-       
-        const userId = await User.createUser(username, email, hashedPassword, role, createdAt);
         const verificationToken = generateEmailVerificationToken(email);
 
         const verificationUrl = `${process.env.BACKEND_URL}/api/auth/verify-email?token=${encodeURIComponent(verificationToken)}`;
@@ -61,17 +60,20 @@ exports.register = async (req, res) => {
                 `,
             });
         }catch(err){
-            console.error('Email sending failed:', err);
             return res.status(500).json({ msg: 'Registration failed: could not send verification email' });
         }
-        
+
+        const role = 'user';
+        const createdAt = new Date().toISOString();
+        const userId = await User.createUser(username, email, hashedPassword, role, createdAt);
+
         return res.status(201).json({
             msg: 'User registered successfully! Please verify your email to activate your account.',
             userId,
         });
 
+
     } catch (err) {
-        console.error('Error in register:', err);
         return res.status(500).json({ msg: 'Internal server error' });
     }
 };
@@ -105,12 +107,13 @@ exports.login = async (req, res) => {
         return res.status(400).json({ msg: 'Please provide username/email and password' });
     }
 
+    const identifierTrimmed = identifier.trim();
     let user = null;
     let type = '';
 
-    if (validateEmail(identifier)) {
+    if (validateEmail(identifierTrimmed) === true) {
         type = 'email';
-    } else if (validateUsername(identifier)) {
+    } else if (validateUsername(identifierTrimmed) === true) {
         type = 'username';
     } else {
         return res.status(400).json({ msg: 'Invalid email or username format' });
@@ -118,9 +121,9 @@ exports.login = async (req, res) => {
 
     try {
         if (type === 'email') {
-            user = await User.findUserByEmail(identifier);
+            user = await User.findUserByEmail(identifierTrimmed);
         } else {
-            user = await User.findUserByUsername(identifier);
+            user = await User.findUserByUsername(identifierTrimmed);
         }
 
         if (!user) {
@@ -141,7 +144,6 @@ exports.login = async (req, res) => {
             token: generateToken(user)
         });
     } catch (err) {
-        console.error('Login error:', err);
         return res.status(500).json({ msg: 'Database error' });
     }
 };
@@ -156,7 +158,7 @@ exports.updateAdmin = async (req, res) => {
 
     if (!role || !['admin', 'main-admin', 'user'].includes(role)) {
         return res.status(400).json({ success: false, msg: 'Invalid role provided' });
-    }
+    } 
 
     try{
         const targetUser = await User.findById(id);
@@ -179,8 +181,6 @@ exports.updateAdmin = async (req, res) => {
 
         
         await User.updateUserRole(id, role);
-
-        console.log(`[ADMIN LOG] ${req.user.username} changed ${targetUser.username}'s role from ${targetUser.role} to ${role} at ${new Date().toISOString()}`);
 
         res.json({msg: `user role updated to ${role} successfully`});
     }catch(err) {
@@ -222,7 +222,6 @@ exports.forgotPassword = async (req, res) => {
                 html: `<p>Click the link to reset your password:</p><a href="${resetUrl}" target="_blank">Reset Password</a>`
             })
         }catch(emailErr){
-            console.error('Email sending failed:', emailErr);
             return res.status(500).json({ msg: 'Failed to send password reset email. Please try again later.' });
         } 
         

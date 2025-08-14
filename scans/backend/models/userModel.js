@@ -2,10 +2,11 @@ const db = require('../database/db');
 
 const findUserByUsername = (username) => {
   return new Promise((resolve, reject) => {
-    const query = `SELECT * FROM users WHERE username = ? COLLATE NOCASE`;
+    const query = `SELECT * FROM users WHERE username = ? COLLATE BINARY`;
     db.get(query, [username], (err, row) => {
       if (err) return reject(err);
       resolve(row || null);
+      console.log("Querying username:", username);
     });
   });
 };
