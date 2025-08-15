@@ -15,7 +15,7 @@ import Aipage from "./pages/Aipage";
 function App() {
   const location = useLocation();
 
-  // Pages where navbar, footer, and chatbot should be hidden
+ 
   const authPages = ["/signup", "/signin", "/reset-password"];
   const hideLayout = authPages.includes(location.pathname);
 

@@ -1,4 +1,4 @@
-// src/pages/Home.jsx
+
 import React from "react";
 import { Link } from "react-router-dom";
 import {
@@ -11,7 +11,7 @@ import {
 export default function Home() {
   return (
     <div className="font-poppins">
-      {/* Hero Section */}
+      {}
       <div className="relative w-full h-[90vh]">
         <img
           src="/images/map.jpg"
@@ -43,7 +43,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Features Section */}
+      {}
       <section className="py-16 bg-gradient-to-b from-[#e5e7eb] via-[#f0fdf4] to-[#e5f4ef] text-center">
         <h2 className="text-3xl font-bold text-[#1f2937] mb-8">
           Why Choose SCNAS?

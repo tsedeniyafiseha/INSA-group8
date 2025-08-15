@@ -18,7 +18,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const [aboutOpen, setAboutOpen] = useState(false);
 
-  // Function for normal NavLink classes
+ 
   const linkClasses = ({ isActive }) =>
     `font-poppins flex items-center gap-2 px-3 py-2 rounded transition-colors duration-200 ${
       isActive ? "bg-gray-300 text-emerald-500" : "text-gray-900 hover:text-emerald-500"
@@ -39,7 +39,7 @@ export default function Navbar() {
   return (
     <nav className="fixed top-0 left-0 w-full bg-gray-200 shadow-md z-50">
       <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-        {/* Logo */}
+        {}
         <NavLink to="/" className="flex items-center gap-2 font-bold rounded-lg shadow-md p-1">
           <img
             src="icons/favicon.ico"
@@ -51,7 +51,7 @@ export default function Navbar() {
           <span className="text-xl md:text-2xl">SCNAS</span>
         </NavLink>
 
-        {/* Navigation */}
+        {}
         <ul className="flex items-center gap-4 text-sm">
           <li>
             <NavLink to="/" className={linkClasses}>

@@ -12,21 +12,21 @@ export default function Chatbot() {
     setMessages([...messages, { type: "user", text: input }]);
     setInput("");
 
-    // Dummy AI reply
+    
     setTimeout(() => {
       setMessages((prev) => [
         ...prev,
-        { type: "ai", text: "Thanks for your message! I am still learning." },
+        { type: "ai", text: "Thanks for your message!" },
       ]);
     }, 1000);
   };
 
   return (
     <div className="fixed right-6 bottom-6  z-50">
-      {/* Chatbot Toggle Button */}
+      {}
       {!isOpen && (
         <div className="fixed right-6 bottom-6 z-50">
-  {/* Chatbot Toggle Button */}
+  {}
   {!isOpen && (
     <div className="relative flex items-center justify-center w-12 h-12">
       <button
@@ -45,15 +45,15 @@ export default function Chatbot() {
 
       )}
 
-      {/* Chat Window */}
+      {}
       {isOpen && (
         <div className="w-96 h-[500px] bg-white border-gray-200 rounded-lg shadow flex flex-col overflow-hidden mt-4">
-          {/* Header */}
+          {}
           <div className="bg-gray-200 p-3 font-poppins font-semibold text-gray-700">
             SCNAS Chatbot
           </div>
 
-          {/* Messages */}
+          {}
           <div className="flex-1 p-3 overflow-y-auto space-y-3">
             {messages.map((msg, idx) => (
               <div
@@ -73,7 +73,7 @@ export default function Chatbot() {
             ))}
           </div>
 
-          {/* Input */}
+          {}
           <div className="p-3 border-t border-gray-300 flex gap-2">
             <input
               type="text"
