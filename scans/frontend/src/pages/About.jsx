@@ -17,7 +17,7 @@ const features = [
     image: "/images/robot.png",
     imagesize: "h-3 w-3 object-contain"
 , 
-    bg: "bg-gradient-to-r from-[#cdd7eb] to-[#acf0d9]  rounded-tl-3xl rounded-tr-none rounded-bl-3xl rounded-br-3xl",
+    bg: "bg-gradient-to-r from-[#cdd7eb] to-[#acf0d9]  rounded-tl-3xl rounded-tr-none rounded-bl-3xl rounded-br-3xl shadow-lg rounded-lg",
   },
   {
     id: "faculty-directory",
@@ -63,7 +63,7 @@ export default function About() {
 
   return (
     <div className="bg-white text-gray-800">
-      {/* Page Header */}
+      {}
       <section className="bg-gradient-to-r from-[#2563eb] to-[#10b981] text-white py-12 text-center px-6">
         <h1 className="text-4xl font-bold">About Us</h1>
         <p className="mt-4 max-w-2xl mx-auto">
@@ -71,7 +71,7 @@ export default function About() {
         </p>
       </section>
 
-      {/* Features */}
+      {}
       <div className="max-w-6xl mx-auto px-6 py-12 space-y-20">
         {features.map((feature, index) => (
           <div
@@ -81,7 +81,7 @@ export default function About() {
               index % 2 === 1 ? "md:flex-row-reverse" : ""
             }`}
           >
-            {/* Image */}
+            {}
             <div className="flex-1 flex justify-center">
               <img
                 src={feature.image}
@@ -90,7 +90,7 @@ export default function About() {
               />
             </div>
 
-            {/* Text with background rectangle */}
+            {}
             <div
               className={`flex-1 ${feature.bg} p-8 rounded-lg shadow-md`}
             >
