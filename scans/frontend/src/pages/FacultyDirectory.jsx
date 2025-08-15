@@ -139,7 +139,7 @@ export default function FacultyDirectory() {
         Explore our distinguished faculty members and their expertise.
       </p>
 
-      {/* Search & Filters */}
+      {}
       <div className="flex flex-wrap items-center gap-4 mb-6">
         <input
           type="search"
@@ -149,7 +149,7 @@ export default function FacultyDirectory() {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
 
-        {/* Department Dropdown */}
+        {}
        <div className="relative">
   <button
     onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -196,7 +196,7 @@ export default function FacultyDirectory() {
         </button>
       </div>
 
-      {/* Faculty List */}
+      {}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {filteredFaculty.length === 0 ? (
           <p className="text-red-500 col-span-2">
