@@ -16,3 +16,21 @@ input::-webkit-credentials-auto-fill-button {
 body, html {
   overflow-x: hidden;
 }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  
+  overflow-x: hidden; 
+}
+
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
