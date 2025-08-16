@@ -44,7 +44,7 @@ export default function Signup() {
             <div className="flex-1 flex items-center bg-gray-100 shadow-md rounded-[32px] py-2 px-4">
               <input
                 type="text"
-                placeholder="Full Name"
+                placeholder="User Name"
                 className="flex-1 outline-none text-gray-700 bg-transparent"
               />
             </div>
@@ -120,20 +120,7 @@ export default function Signup() {
             </button>
           </div>
 
-          <div className="flex items-center my-2 w-full sm:w-3/4 mx-auto">
-            <div className="flex-grow border-t border-gray-300"></div>
-            <span className="mx-1 text-gray-500 text-sm">or using Google</span>
-            <div className="flex-grow border-t border-gray-300"></div>
-          </div>
-
-          <div className="flex justify-center w-full sm:w-3/4 mx-auto">
-            <button className="flex items-center justify-center border border-blue-600 py-2 px-8 rounded-[32px] hover:bg-gray-50 transition">
-              <FcGoogle className="text-xl mr-3" />
-              <span className="text-gray-900 font-medium">
-                Sign up with Google
-              </span>
-            </button>
-          </div>
+          
         </div>
       </div>
     </div>

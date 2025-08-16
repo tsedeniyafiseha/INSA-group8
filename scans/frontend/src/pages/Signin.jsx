@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
-import { FcGoogle } from "react-icons/fc";
+import { FaUser, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 
 function ForgotPassword({ onBack }) {
   const [email, setEmail] = useState("");
@@ -32,7 +31,7 @@ function ForgotPassword({ onBack }) {
 
           <div className="mb-6 flex items-center w-full sm:w-3/4 mx-auto">
             <div className="flex items-center justify-center w-12 h-12 text-blue-600 mr-4">
-              <FaEnvelope size={28} />
+              <FaUser size={28} />
             </div>
             <input
               type="email"
@@ -85,18 +84,19 @@ export default function Signin() {
             Sign In
           </h2>
 
+          {/* Username or Email field */}
           <div className="mb-6 flex items-center w-full sm:w-3/4 mx-auto">
             <div className="flex items-center justify-center w-12 h-12 text-blue-600 mr-4">
-              <FaEnvelope size={28} />
+              <FaUser size={28} />
             </div>
             <input
-              type="email"
-              placeholder="Email"
+              type="text"
+              placeholder="Username or Email"
               className="flex-1 py-2 px-4 bg-gray-100 shadow-md rounded-[32px] outline-none text-gray-700"
             />
           </div>
 
-          {}
+          {/* Password field */}
           <div className="mb-6 flex items-center w-full sm:w-3/4 mx-auto">
             <div className="flex items-center justify-center w-12 h-12 text-blue-600 mr-4">
               <FaLock size={28} />
@@ -117,6 +117,7 @@ export default function Signin() {
             </button>
           </div>
 
+          {/* Forgot password */}
           <div className="w-full sm:w-3/4 mx-auto text-right mb-6">
             <button
               onClick={() => setShowForgot(true)}
@@ -126,23 +127,10 @@ export default function Signin() {
             </button>
           </div>
 
+          {/* Sign In button */}
           <div className="flex justify-center mb-6">
             <button className="text-white py-2 px-10 rounded-[32px] font-semibold shadow-md hover:shadow-lg transition bg-[#2563eb] active:bg-[#10b981]">
               Sign In
-            </button>
-          </div>
-
-          <div className="flex items-center my-6 w-full sm:w-3/4 mx-auto">
-            <div className="flex-grow border-t border-gray-300"></div>
-            <span className="mx-3 text-gray-500 text-sm">or using Google</span>
-            <div className="flex-grow border-t border-gray-300"></div>
-          </div>
-          <div className="flex justify-center w-full sm:w-3/4 mx-auto">
-            <button className="flex items-center justify-center border border-blue-600 py-2 px-8 rounded-[32px] hover:bg-gray-50 transition">
-              <FcGoogle className="text-xl mr-3" />
-              <span className="text-gray-900 font-medium">
-                Sign in with Google
-              </span>
             </button>
           </div>
         </div>
