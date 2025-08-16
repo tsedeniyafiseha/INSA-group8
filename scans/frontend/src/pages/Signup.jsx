@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { FaUser, FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
@@ -16,11 +15,11 @@ export default function Signup() {
   return (
     <div className="relative w-screen h-screen bg-gradient-to-r from-[#c0ceeb] to-[#87d0b8] flex items-center justify-center overflow-hidden">
       
-
       {}
-      <div className="relative z-10 flex w-full max-w-5xl shadow-2xl rounded-xl overflow-hidden h-[500px]">
+      <div className="relative z-10 flex flex-col md:flex-row w-full h-full md:max-w-5xl md:shadow-2xl md:rounded-xl overflow-hidden md:h-[500px] bg-white">
+        
         {}
-        <div className="w-2/5 bg-blue-600 p-8 flex flex-col items-center justify-center text-center text-white">
+        <div className="hidden md:flex md:w-2/5 bg-blue-600 p-8 flex-col items-center justify-center text-center text-white">
           <h2 className="text-3xl font-bold mb-4">Welcome!</h2>
           <p className="italic tracking-wide text-lg max-w-xs mb-8">
             Already have an account? Click below to continue using the service.
@@ -34,45 +33,49 @@ export default function Signup() {
         </div>
 
         {}
-        <div className="w-3/5 bg-white p-8 flex flex-col justify-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-1 text-center">Create Account</h2>
+        <div className="w-full md:w-3/5 p-8 flex flex-col justify-center">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">Create Account</h2>
 
           {}
-          <div className="mb-6 flex items-center w-3/4 mx-auto">
-            <div className="flex items-center justify-center w-12 h-12 text-blue-600 mr-4">
-              <FaUser size={28} />
+          <div className="mb-6 flex items-center w-full sm:w-3/4 mx-auto">
+            <div className="flex items-center justify-center w-8 h-8 md:w-12 md:h-12 text-blue-600 mr-4">
+              <FaUser size={20} className="md:w-7 md:h-7" />
             </div>
-            <input
-              type="text"
-              placeholder="Full Name"
-              className="flex-1 py-2 px-4 bg-gray-100 shadow-md rounded-[32px] outline-none text-gray-700"
-            />
+            <div className="flex-1 flex items-center bg-gray-100 shadow-md rounded-[32px] py-2 px-4">
+              <input
+                type="text"
+                placeholder="Full Name"
+                className="flex-1 outline-none text-gray-700 bg-transparent"
+              />
+            </div>
           </div>
 
           {}
-          <div className="mb-6 flex items-center w-3/4 mx-auto">
-            <div className="flex items-center justify-center w-12 h-12 text-blue-600 mr-4">
-              <FaEnvelope size={28} />
+          <div className="mb-6 flex items-center w-full sm:w-3/4 mx-auto">
+            <div className="flex items-center justify-center w-8 h-8 md:w-12 md:h-12 text-blue-600 mr-4">
+              <FaEnvelope size={20} className="md:w-7 md:h-7" />
             </div>
-            <input
-              type="email"
-              placeholder="Email"
-              className="flex-1 py-2 px-4 bg-gray-100 shadow-md rounded-[32px] outline-none text-gray-700"
-            />
+            <div className="flex-1 flex items-center bg-gray-100 shadow-md rounded-[32px] py-2 px-4">
+              <input
+                type="email"
+                placeholder="Email"
+                className="flex-1 outline-none text-gray-700 bg-transparent"
+              />
+            </div>
           </div>
 
           {}
-          <div className="mb-6 flex items-center w-3/4 mx-auto">
-            <div className="flex items-center justify-center w-12 h-12 text-blue-600 mr-4">
-              <FaLock size={28} />
+          <div className="mb-6 flex items-center w-full sm:w-3/4 mx-auto">
+            <div className="flex items-center justify-center w-8 h-8 md:w-12 md:h-12 text-blue-600 mr-4">
+              <FaLock size={20} className="md:w-7 md:h-7" />
             </div>
-            <div className="flex-1 flex items-center bg-gray-100 shadow-md rounded-[32px] px-4">
+            <div className="flex-1 flex items-center bg-gray-100 shadow-md rounded-[32px] py-2 px-4">
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="flex-1 py-2 bg-gray-100 outline-none text-gray-700"
+                className="flex-1 outline-none text-gray-700 bg-transparent"
               />
               <button
                 type="button"
@@ -85,24 +88,21 @@ export default function Signup() {
           </div>
 
           {}
-          <div className="mb-6 flex items-center w-3/4 mx-auto">
-            <div className="flex items-center justify-center w-12 h-12 text-blue-600 mr-4">
-              <FaLock size={28} />
+          <div className="mb-6 flex items-center w-full sm:w-3/4 mx-auto">
+            <div className="flex items-center justify-center w-8 h-8 md:w-12 md:h-12 text-blue-600 mr-4">
+              <FaLock size={20} className="md:w-7 md:h-7" />
             </div>
             <div
-              className="flex-1 flex items-center shadow-md rounded-[32px] px-4"
-              style={{
-                backgroundColor: "#f3f4f6",
-                border: `2px solid ${confirmPassword === "" ? "#d1d5db" : isConfirmValid ? "#10b981" : "red"}`,
-                transition: "border-color 0.3s",
-              }}
+              className={`flex-1 flex items-center shadow-md rounded-[32px] py-2 px-4 border-2
+                ${confirmPassword === "" ? "border-gray-300" : isConfirmValid ? "border-green-500" : "border-red-500"}
+              `}
             >
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 placeholder="Confirm Password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="flex-1 py-2 bg-transparent outline-none text-gray-700"
+                className="flex-1 outline-none text-gray-700 bg-transparent"
               />
               <button
                 type="button"
@@ -114,24 +114,24 @@ export default function Signup() {
             </div>
           </div>
 
-          {}
           <div className="flex justify-center mb-6">
             <button className="text-white py-2 px-10 rounded-[32px] font-semibold shadow-md hover:shadow-lg transition bg-[#2563eb] active:bg-[#10b981]">
               Sign Up
             </button>
           </div>
 
-          {}
-          <div className="flex items-center my-2 w-3/4 mx-auto">
+          <div className="flex items-center my-2 w-full sm:w-3/4 mx-auto">
             <div className="flex-grow border-t border-gray-300"></div>
             <span className="mx-1 text-gray-500 text-sm">or using Google</span>
             <div className="flex-grow border-t border-gray-300"></div>
           </div>
 
-          <div className="flex justify-center w-3/4 mx-auto">
+          <div className="flex justify-center w-full sm:w-3/4 mx-auto">
             <button className="flex items-center justify-center border border-blue-600 py-2 px-8 rounded-[32px] hover:bg-gray-50 transition">
               <FcGoogle className="text-xl mr-3" />
-              <span className="text-gray-900 font-medium">Sign up with Google</span>
+              <span className="text-gray-900 font-medium">
+                Sign up with Google
+              </span>
             </button>
           </div>
         </div>

@@ -9,32 +9,35 @@ import SignUp from "./pages/Signup";
 import Signin from "./pages/Signin";
 import FacultyDirectory from "./pages/FacultyDirectory";
 import ResetPassword from "./pages/ResetPassword";
-
-import Aipage from "./pages/Aipage"; 
+import Aipage from "./pages/Aipage";
 
 function App() {
   const location = useLocation();
 
- 
   const authPages = ["/signup", "/signin", "/reset-password"];
   const hideLayout = authPages.includes(location.pathname);
 
   return (
     <div className="flex flex-col min-h-screen">
+      {}
       {!hideLayout && <Navbar />}
-      <main className={`flex-grow ${!hideLayout ? "p-8" : ""}`}>
+
+      {}
+      <main className={`flex-grow ${!hideLayout ? "pt-16 md:pt-16" : ""}`}>
         <Routes>
-          <Route path="/about" element={<About />} />
           <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/signin" element={<Signin />} />
           <Route path="/faculty" element={<FacultyDirectory />} />
           <Route path="/reset-password" element={<ResetPassword />} />
         </Routes>
       </main>
+
+      {}
       {!hideLayout && <Footer />}
 
-      {/* Show Chatbot only on non-auth pages */}
+      {}
       {!hideLayout && <Aipage />}
     </div>
   );
