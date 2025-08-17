@@ -67,7 +67,7 @@ const styles = {
   },
   searchIcon: {
     position: 'absolute',
-    top: '60%',
+    top: '50%',
     left: '20px',
     transform: 'translateY(-50%)',
     color: '#355594ff',
@@ -86,15 +86,17 @@ const styles = {
     alignItems: 'center',
     transition:'color 0.3s, textshadow 0.3s',
   },
-  actionItemLast: {
+  actionItemList: {
     borderBottom: 'none',
   },
   actionIcon: {
     marginRight: '15px',
     color: '#3157a8ff',
-    textshadow: '#0e7c52ff',
   },
-  
+    actionIconHover: {
+        color: '#32995eff',
+        textShadow: '0 0 10px #22b662ff, 0 0 20px #32995eff',
+    },
   mapView: {
     flexGrow: 1,
     backgroundColor: '#e7f1f5ff',
@@ -108,14 +110,6 @@ const styles = {
     width: '100%',
     background: "url('https://via.placeholder.com/1200x800.png?text=Interactive+Map+Placeholder') center/cover no-repeat",
   }, 
-    actionItemHover: {
-        color: '#169e7cff', // A brighter color for the text itself
-        textShadow: '0 0 10px #3157a8ff, 0 0 20px #3157a8ff',
-    },
-    actionIconHover: {
-        color: '#32995eff',
-        textShadow: '0 0 10px #22b662ff, 0 0 20px #32995eff',
-    }
   };
 
 const MapPage = () => {

@@ -51,6 +51,7 @@ const App = () => {
             {/* The onClick handler updates the state, causing the page to re-render with the new content. */}
             <li><a href="#" className={activePage === 'home' ? 'active' : ''} onClick={() => setActivePage('home')}>Home</a></li>
             <li><a href="#" className={activePage === 'map' ? 'active' : ''} onClick={() => setActivePage('map')}>Campus Map</a></li>
+            <li><a href="#" classname={activePage === 'faculty' ? 'active' : ''} onClick={() => setActivePage('faculty')}>Faculty</a></li>
             <li><a href="#" className={activePage === 'schedule' ? 'active' : ''} onClick={() => setActivePage('schedule')}>Schedule</a></li>
             <li><a href="#" className={activePage === 'lost-found' ? 'active' : ''} onClick={() => setActivePage('lost-found')}>Lost & Found</a></li>
           </ul>

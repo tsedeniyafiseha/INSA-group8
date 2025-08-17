@@ -10,7 +10,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #fff;
+    background-color: #ece4e4;
     padding: 15px 30px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -18,7 +18,7 @@
 .logo {
     font-weight: bold;
     font-size: 50px;
-    color: #004d99;
+    color: #0c2f52;
 }
 
 /* Navigation links */
@@ -27,23 +27,24 @@
     margin: 0;
     padding: 10px ;
     display: flex;
+    margin-left: 250px;
 }
 
 .navbar li {
-    margin-left: 20px;
+    margin-left: 30px;
 }
 
 .navbar a {
     text-decoration: none;
-    color: #555;
+    color: #153049;
     font-weight: 500;
     padding: 5px 0;
 }
 
 /* Highlight for the active link */
 .navbar a.active {
-    color: #004d99;
-    border-bottom: 2px solid #004d99;
+    color: #169962;
+    border-bottom: 2px solid #0d2135;
 }
 
 .main-content {
@@ -58,13 +59,13 @@
     padding: 8px 16px;
     border: 1px solid #004d99;
     background-color: transparent;
-    color: #004d99;
+    color: #174069;
     border-radius: 4px;
     cursor: pointer;
     font-weight: bold;
 }
 
 .sign-in-btn:hover, .sign-out-btn:hover {
-    background-color: #004d99;
+    background-color: #163e66;
     color: #fff;
 }
