@@ -72,7 +72,7 @@ const updatePasswordByEmail = (email, hashedPassword) => {
         });
     });
 };
-
+ 
 const countByRole = (role) => {
     return new Promise((resolve, reject) => {
         const query = `SELECT COUNT(*) AS count FROM users WHERE role = ?`;
