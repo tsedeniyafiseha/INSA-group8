@@ -8,9 +8,9 @@ const generateToken = (user) => {
     );
 };
 
-const generateEmailVerificationToken = (email) => {
+const generateEmailVerificationToken = (email, version) => {
     return jwt.sign(
-        { email }, 
+        { email, version }, 
         process.env.JWT_SECRET, 
         { expiresIn: '24h' })
 

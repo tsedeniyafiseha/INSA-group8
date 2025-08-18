@@ -16,10 +16,11 @@ db.serialize(() => {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT NOT NULL UNIQUE,
             email TEXT NOT NULL UNIQUE COLLATE NOCASE,
-            password TEXT,
+            password TEXT NOT NULL,
             role TEXT DEFAULT 'user',
             verified INTEGER DEFAULT 0,
-            created_at DATE
+            created_at DATE,
+            emailTokenVersion INTEGER DEFAULT 0
         )
     `, (err) => {
         if (err) console.error('Error creating users table:', err.message);

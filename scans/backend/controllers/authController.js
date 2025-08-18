@@ -44,8 +44,13 @@ exports.register = async (req, res) => {
 
         
         const hashedPassword = await bcrypt.hash(password, 10);
-        const verificationToken = generateEmailVerificationToken(email);
+        const role = 'user';
+        const createdAt = new Date().toISOString();
+        const emailTokenVersion = 0;
 
+        const userId = await User.createUser(username, email, hashedPassword, role, createdAt, emailTokenVersion);
+        
+        const verificationToken = generateEmailVerificationToken(email);
         const verificationUrl = `${process.env.BACKEND_URL}/api/auth/verify-email?token=${encodeURIComponent(verificationToken)}`;
         
         try{
@@ -63,9 +68,7 @@ exports.register = async (req, res) => {
             return res.status(500).json({ msg: 'Registration failed: could not send verification email' });
         }
 
-        const role = 'user';
-        const createdAt = new Date().toISOString();
-        const userId = await User.createUser(username, email, hashedPassword, role, createdAt);
+        
 
         return res.status(201).json({
             msg: 'User registered successfully! Please verify your email to activate your account.',
@@ -86,13 +89,21 @@ exports.verifyEmail = async (req, res) => {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        const changes = await User.verifyEmail(decoded.email);
-            if (changes === 0) {
-                return res.status(404).json({ msg: 'User not found' });
-            }
-            res.json({ msg: 'Email successfully verified!' });
+        const { email, tokenVersion } = decoded;
+
+        const user = await User.findUserByEmailAndVersion(email, tokenVersion);
+        if (!user) {
+            return res.status(400).json({ msg: 'Invalid or expired token' });
+        }
+
+        const changes = await User.verifyEmail(email);
+        if (changes === 0) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
+        return res.json({ msg: 'Email successfully verified!' });
     } catch (err) {
-        if (err.name === 'TokenExpiredError') {
+         if (err.name === 'TokenExpiredError') {
             return res.status(400).json({ msg: 'Token expired' });
         }
         return res.status(400).json({ msg: 'Invalid token' });
@@ -136,6 +147,21 @@ exports.login = async (req, res) => {
         }
 
         if (!user.verified) {
+            await User.incrementEmailTokenVersion(user.id); // new version stored in DB
+            const updatedUser = await User.findUserById(user.id);
+            const verificationToken = generateEmailVerificationToken(updatedUser.email, updatedUser.emailTokenVersion);
+            const verificationUrl = `${process.env.BACKEND_URL}/api/auth/verify-email?token=${encodeURIComponent(verificationToken)}`;
+
+            await sendEmail({
+                to: updatedUser.email,
+                subject: 'Verify Your Email - SCNAS',
+                html: `
+                    <h2>Hello ${updatedUser.username},</h2>
+                    <p>You haven't verified your email yet. Click below to verify:</p>
+                    <a href="${verificationUrl}" target="_blank">Verify Email</a>
+                    <p>This link will expire in 24 hours.</p>
+                    `
+                });
             return res.status(403).json({ msg: 'Please verify your email before logging in.' });
         }
 
