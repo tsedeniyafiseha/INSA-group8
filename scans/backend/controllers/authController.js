@@ -49,6 +49,7 @@ exports.register = async (req, res) => {
         const emailTokenVersion = 0;
 
         const userId = await User.createUser(username, email, hashedPassword, role, createdAt, emailTokenVersion);
+
         
         const verificationToken = generateEmailVerificationToken(email);
         const verificationUrl = `${process.env.BACKEND_URL}/api/auth/verify-email?token=${encodeURIComponent(verificationToken)}`;
@@ -77,6 +78,7 @@ exports.register = async (req, res) => {
 
 
     } catch (err) {
+        console.error("Register error:", err);
         return res.status(500).json({ msg: 'Internal server error' });
     }
 };
@@ -89,7 +91,7 @@ exports.verifyEmail = async (req, res) => {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        const { email, tokenVersion } = decoded;
+        const { email, version: tokenVersion } = decoded;
 
         const user = await User.findUserByEmailAndVersion(email, tokenVersion);
         if (!user) {
@@ -147,9 +149,16 @@ exports.login = async (req, res) => {
         }
 
         if (!user.verified) {
-            await User.incrementEmailTokenVersion(user.id); // new version stored in DB
+            await User.incrementEmailTokenVersion(user.id);
+
             const updatedUser = await User.findUserById(user.id);
-            const verificationToken = generateEmailVerificationToken(updatedUser.email, updatedUser.emailTokenVersion);
+
+            const verificationToken = generateEmailVerificationToken(
+                updatedUser.email, 
+                updatedUser.emailTokenVersion
+            );
+
+
             const verificationUrl = `${process.env.BACKEND_URL}/api/auth/verify-email?token=${encodeURIComponent(verificationToken)}`;
 
             await sendEmail({
@@ -170,6 +179,7 @@ exports.login = async (req, res) => {
             token: generateToken(user)
         });
     } catch (err) {
+        console.error("Login error:", err);
         return res.status(500).json({ msg: 'Database error' });
     }
 };

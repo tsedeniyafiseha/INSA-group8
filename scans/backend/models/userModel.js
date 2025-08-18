@@ -22,15 +22,16 @@ const findUserByEmail = (email) => {
 };
 
 
-const createUser = (username, email, hashedPassword, role, createdAt) => {
+const createUser = (username, email, hashedPassword, role, createdAt, emailTokenVersion) => {
     return new Promise((resolve, reject) => {
-        const insertQuery = `INSERT INTO users (username, email, password, role, created_at, verified, emailTokenVersion) VALUES (?, ?, ?, ?, ?, 0)`
-        db.run(insertQuery, [username, email, hashedPassword, role, createdAt], function (err) {
+        const insertQuery = `INSERT INTO users (username, email, password, role, created_at, verified, emailTokenVersion) VALUES (?, ?, ?, ?, ?, 0, ?)`;
+        db.run(insertQuery, [username, email, hashedPassword, role, createdAt, emailTokenVersion], function (err) {
             if (err) return reject(err);
             resolve(this.lastID);
         });
     });
 };
+
 
 const verifyEmail = (email) => {
     return new Promise((resolve, reject) => {
@@ -102,6 +103,15 @@ const findUserByEmailAndVersion = (email, tokenVersion) => {
   });
 };
 
+const findUserById = (id) => {
+    return new Promise((resolve, reject) => {
+        const query = `SELECT * FROM users WHERE id = ?`;
+        db.get(query, [id], (err, row) => {
+            if (err) return reject(err);
+            resolve(row || null);
+        });
+    });
+};
 
 
 module.exports = {
@@ -114,5 +124,6 @@ module.exports = {
   updatePasswordByEmail,
   countByRole,
   incrementEmailTokenVersion,
-  findUserByEmailAndVersion
+  findUserByEmailAndVersion,
+  findUserById
 };
