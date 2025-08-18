@@ -2,7 +2,7 @@ const express = require('express');
 
 const router = express.Router();
 
-const {register, login, updateAdmin, verifyEmail} = require ('../controllers/authController');
+const {signUP, signIn, updateAdmin, verifyEmail} = require ('../controllers/authController');
 
 const authMiddleware = require('../middleware/authMiddleware');
 
@@ -12,9 +12,9 @@ const loginLimiter = require('../middleware/rateLimiter');
 
 const { forgotPassword, resetPassword } = require('../controllers/authController');
 
-router.post('/register', register);
+router.post('/signUP', signUP);
 
-router.post('/login', loginLimiter, login);
+router.post('/signIn', loginLimiter, signIn);
 
 router.get('/profile', authMiddleware, profile);
 

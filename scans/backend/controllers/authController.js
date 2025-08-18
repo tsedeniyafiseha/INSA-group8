@@ -7,7 +7,7 @@ const {validateUsername, validateEmail, validatePassword} = require('../utils/va
 const {sendEmail}  = require('../utils/mailer');
 
 
-exports.register = async (req, res) => {
+exports.signUP = async (req, res) => {
     let { username, email, password } = req.body;
 
     if (!username || !email || !password) {
@@ -91,10 +91,13 @@ exports.verifyEmail = async (req, res) => {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
+        console.log("Decoded token:", decoded);
+ 
         const { email, version: tokenVersion } = decoded;
 
         const user = await User.findUserByEmailAndVersion(email, tokenVersion);
         if (!user) {
+            console.log("User not found with email and tokenVersion:", email, tokenVersion); 
             return res.status(400).json({ msg: 'Invalid or expired token' });
         }
 
@@ -105,6 +108,7 @@ exports.verifyEmail = async (req, res) => {
 
         return res.json({ msg: 'Email successfully verified!' });
     } catch (err) {
+        console.error("Verification error:", err);
          if (err.name === 'TokenExpiredError') {
             return res.status(400).json({ msg: 'Token expired' });
         }
@@ -113,7 +117,7 @@ exports.verifyEmail = async (req, res) => {
 };
 
 
-exports.login = async (req, res) => {
+exports.signIn = async (req, res) => {
     const { identifier, password } = req.body;
 
     if (!identifier || !password) {
@@ -140,18 +144,19 @@ exports.login = async (req, res) => {
         }
 
         if (!user) {
-            return res.status(400).json({ msg: 'Invalid login credentials' });
+            return res.status(400).json({ msg: 'Invalid sign In credentials' });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(401).json({ msg: 'Invalid login credentials' });
+            return res.status(401).json({ msg: 'Invalid sign In credentials' });
         }
 
         if (!user.verified) {
             await User.incrementEmailTokenVersion(user.id);
 
             const updatedUser = await User.findUserById(user.id);
+            console.log("Updated user:", updatedUser);
 
             const verificationToken = generateEmailVerificationToken(
                 updatedUser.email, 
@@ -175,11 +180,11 @@ exports.login = async (req, res) => {
         }
 
         return res.status(200).json({
-            msg: 'Login successfully',
+            msg: 'sign In successfully',
             token: generateToken(user)
         });
     } catch (err) {
-        console.error("Login error:", err);
+        console.error("signIn error:", err);
         return res.status(500).json({ msg: 'Database error' });
     }
 };

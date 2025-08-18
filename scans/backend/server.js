@@ -1,6 +1,13 @@
 const express = require('express');
 const helmet = require('helmet');
 const app = express();
+const cors = require("cors");
+
+app.use(cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true, 
+}));
 
 require('dotenv').config();
 
