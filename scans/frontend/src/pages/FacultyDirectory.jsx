@@ -173,7 +173,7 @@ export default function FacultyDirectory() {
                 : "text-blue-600"
             }  hover:text-emerald-500 transition`}
             style={{
-              WebkitOverflowScrolling: "touch", // smooth swipe on mobile
+              WebkitOverflowScrolling: "touch",
             }}
           >
             {dep}

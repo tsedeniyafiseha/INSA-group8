@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
-import { FiSend } from "react-icons/fi"; 
-import { IoClose } from "react-icons/io5"; 
-import { BsChatTextFill } from "react-icons/bs"; 
+
+import { IoSend, IoClose } from "react-icons/io5"; 
+import { BsChatTextFill } from "react-icons/bs";
 
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,7 +24,6 @@ export default function Chatbot() {
     }, 1000);
   };
 
-  
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -46,7 +45,7 @@ export default function Chatbot() {
 
       {isOpen && (
         <div className="w-[90vw] max-w-sm h-[70vh] sm:w-96 sm:h-[500px] bg-white border-gray-200 rounded-lg shadow-xl flex flex-col overflow-hidden">
-          {/* Header */}
+          
           <div className="flex justify-between items-center bg-gray-200 p-3 font-semibold text-gray-700">
             SCNAS Chatbot
             <button
@@ -58,7 +57,7 @@ export default function Chatbot() {
             </button>
           </div>
 
-          {/* Messages */}
+         
           <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-gray-50">
             {messages.map((msg, idx) => (
               <div
@@ -79,7 +78,7 @@ export default function Chatbot() {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Input */}
+          
           <div className="p-3 border-t border-gray-300 flex items-center gap-2">
             <input
               type="text"
@@ -94,7 +93,7 @@ export default function Chatbot() {
               className="bg-blue-600 text-white w-10 h-10 flex items-center justify-center rounded-full shadow-md hover:bg-blue-700 transition-colors"
               aria-label="Send message"
             >
-              <FiSend size={20} />
+              <IoSend size={20} />
             </button>
           </div>
         </div>
