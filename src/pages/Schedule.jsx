@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react'; // 1️⃣ Import useState
 
 const styles = {
   scheduleContainer: {
@@ -52,7 +52,7 @@ const styles = {
   eventListTodayP: { fontSize: '17px', margin: '5px 0' },
   quickActionsSection: { marginTop: '30px' },
   quickActionsTitle: { fontSize: '25px', color: '#004d99' },
-  actionList: { listStyle: 'none', padding: '0', hover:'#2b41a3ff' },
+  actionList: { listStyle: 'none', padding: '0', hover: '#2b41a3ff' },
   actionListItem: {
     padding: '10px 0',
     cursor: 'pointer',
@@ -60,8 +60,8 @@ const styles = {
     borderBottom: '1px solid #eee',
     transition: 'all 0.2s ease',
   },
-  actionListItemhover:{
-  background: '#136948ff',
+  actionListItemhover: {
+    background: '#136948ff',
   },
   actionListItemIcon: { marginRight: '10px', color: '#2a6dafff' },
   scheduleHeader: {
@@ -86,8 +86,8 @@ const styles = {
     borderRadius: '5px',
     cursor: 'pointer',
   },
-  addEventButtonHover:{
-    color:'#0b6844ff'
+  addEventButtonHover: {
+    color: '#0b6844ff',
   },
   weekGrid: {
     display: 'grid',
@@ -122,14 +122,24 @@ const styles = {
     fontSize: '12px',
     marginBottom: '5px',
   },
+  modalOverlay: {
+    position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+    background: "rgba(0,0,0,0.5)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1000
+  },
+  modalContent: {
+    background: "#fff", padding: "20px", borderRadius: "8px", width: "300px", textAlign: "center"
+  },
+  input: {
+    width: "100%", padding: "8px", margin: "5px 0", border: "1px solid #ddd", borderRadius: "4px"
+  },
 };
 
 const SchedulePage = () => {
-  const events = [
+  const [events, setEvents] = useState([
     { id: 1, title: 'CS 101: Computer Science', time: '09:00-10:20', day: 'Wed', date: 32 },
     { id: 2, title: 'Math 201: Calculus II', time: '10:30-12:00', day: 'Wed', date: 32 },
     { id: 3, title: 'Study Group Meeting', time: '14:00-16:00', day: 'Thu', date: 33 },
-  ];
+  ]);
 
   const renderEventsForDay = (day) =>
     events
@@ -138,15 +148,31 @@ const SchedulePage = () => {
         <div key={event.id} style={styles.eventItem}>
           <p>{event.title}</p>
           <p>{event.time}</p>
+          <button onClick={() => handleDeleteEvent(event.id)}>
+            Delete
+          </button>
         </div>
       ));
+
+  const [showModal, setShowModal] = useState(false);
+  const [newEvent, setNewEvent] = useState({ title: "", time: "", day: "Mon" });
+
+  const handleAddEvent = () => {
+    if (!newEvent.title || !newEvent.time) return;
+    setEvents([...events, { id: Date.now(), ...newEvent }]);
+    setNewEvent({ title: "", time: "", day: "Mon" });
+    setShowModal(false);
+  };
+
+  const handleDeleteEvent = (id) => {
+    setEvents(events.filter((event) => event.id !== id));
+  };
 
   return (
     <section style={styles.scheduleContainer}>
       <div style={styles.scheduleLeftPanel}>
         <h1 style={styles.title}>My Schedule</h1>
         <p style={styles.subtitle}>Manage your classes and campus events</p>
-
         <div style={styles.calendarMini}>
           <div style={styles.monthHeader}>July 2025</div>
           <div style={styles.calendarGrid}>
@@ -158,13 +184,11 @@ const SchedulePage = () => {
             ))}
           </div>
         </div>
-
         <div style={styles.eventListToday}>
           <h3 style={styles.eventListTodayTitle}>Today's Events</h3>
-          <p style={styles.eventListTodayP}>CS 101: Computer Science</p>
-          <p style={styles.eventListTodayP}>Math 201: Calculus II</p>
+          {/* Display today's events from the state */}
+          {events.filter(e => e.day === "Wed").map(e => <p key={e.id} style={styles.eventListTodayP}>{e.title}</p>)}
         </div>
-
         <div style={styles.quickActionsSection}>
           <h3 style={styles.quickActionsTitle}>Quick Actions</h3>
           <ul style={styles.actionList}>
@@ -177,22 +201,26 @@ const SchedulePage = () => {
 
       <div style={styles.scheduleMainView}>
         <div style={styles.scheduleHeader}>
-          <h2>Week of July 31</h2>
+          <h2>Week View</h2>
           <div style={styles.viewButtons}>
             <button style={styles.viewButton}>Today</button>
             <button style={styles.viewButton}>Week</button>
             <button style={styles.viewButton}>Month</button>
-            <button style={styles.addEventButton}>+ Add Event</button>
+            <button
+              style={styles.addEventButton}
+              onClick={() => setShowModal(true)}
+            >
+              + Add Event
+            </button>
           </div>
         </div>
-
         <div style={styles.weekGrid}>
           <div style={styles.timeColumn}>
             {[...Array(12).keys()].map((i) => (
               <div key={i} style={styles.timeSlot}>{`${i + 7}:00`}</div>
             ))}
           </div>
-          {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, index) => (
+          {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day, index) => (
             <div key={day} style={styles.dayColumn}>
               <div style={styles.dayHeader}>{day} {31 + index}</div>
               <div style={styles.daySlots}>{renderEventsForDay(day)}</div>
@@ -200,9 +228,53 @@ const SchedulePage = () => {
           ))}
         </div>
       </div>
+      
+      {/* Add Event Modal */}
+      {showModal && (
+        <div style={styles.modalOverlay}>
+          <div style={styles.modalContent}>
+            <h3>Add New Event</h3>
+            <input
+              type="text"
+              placeholder="Event Title"
+              value={newEvent.title}
+              onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
+              style={styles.input}
+            />
+            <input
+              type="text"
+              placeholder="Time (e.g. 09:00-10:00)"
+              value={newEvent.time}
+              onChange={(e) => setNewEvent({ ...newEvent, time: e.target.value })}
+              style={styles.input}
+            />
+            <select
+              value={newEvent.day}
+              onChange={(e) => setNewEvent({ ...newEvent, day: e.target.value })}
+              style={styles.input}
+            >
+              {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
+                <option key={d} value={d}>
+                  {d}
+                </option>
+              ))}
+            </select>
+            <div style={{ marginTop: "10px" }}>
+              <button onClick={handleAddEvent} style={styles.addEventButton}>
+                Save
+              </button>
+              <button
+                onClick={() => setShowModal(false)}
+                style={styles.viewButton}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
 
 export default SchedulePage;
-

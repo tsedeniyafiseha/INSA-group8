@@ -28,11 +28,11 @@ const styles = {
     cursor: 'pointer',
     fontWeight: 600,
     fontSize: '16px',
-    transition: '0.3s',
+    transition: 'background-color 0.3s',
   },
   reportButtonHover:'#19af7dff',
   title: {
-    color: '#374151',
+    color: '#20314d',
     fontSize: '75px',
     fontWeight: 'bold',
     margin: 0,
@@ -87,10 +87,14 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
   },
-  filterButtonActive: {
+  filterButtonhover: {
     background: '#10b981',
     color: '#fff',
     borderColor: '#3ea087ff',
+  },
+  filterbuttonsvg:{
+    marginleft: '8px',
+    fontsize: '12px',
   },
   lostFoundCardsGrid: {
     display: 'grid',
@@ -110,8 +114,13 @@ const styles = {
     textAlign: 'left',
     transition: 'transform 0.3s',
   },
-  cardHover: { transform: 'translateY(-10px)' },
-  cardIcon: { fontSize: '4rem', color: '#2173c4ff' },
+  cardHover: { 
+    transform: 'translateY(-10px)',
+   },
+  cardIcon: { 
+    fontSize: '4rem', 
+    color: '#2173c4ff' ,
+  },
   cardContentTitle: { margin: 0, gap: '20px', fontSize: '25px', color: '#0b1f3a' },
   status: {
     fontWeight: 'bold',
@@ -127,17 +136,17 @@ const styles = {
   details: { fontSize: '14px', color: '#555', margin: '5px 0' },
   viewDetailsButton: {
     width: '100%',
-    backgroundColor: '#1474daff',
+    background: '#1474daff',
     color: '#fff',
     border: 'none',
     padding: '10px 15px',
     borderRadius: '5px',
     cursor: 'pointer',
-    fontWeight: 600,
+    fontWeight: '600',
     marginTop: '15px',
     transition: 'background-color 0.3s',
   },
-  viewDetailsButtonHover: '#0b3f77ff' ,
+  viewDetailsButtonHover: 'backgroundColor #0b3f77ff' ,
 };
 
 const LostFound = () => {
