@@ -21,9 +21,9 @@ router.get('/profile', authMiddleware, profile);
 router.put('/updateAdmin/:id', authMiddleware, updateAdmin);
 
 router.get('/verify-email', verifyEmail);
-
+ 
 router.post('/forgot-password', forgotPassword);
 
 router.post('/reset-password', resetPassword);
 
-module.exports = router;
+module.exports = router; 

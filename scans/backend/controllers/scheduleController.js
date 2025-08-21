@@ -14,9 +14,9 @@ exports.createSchedule = async (req, res) => {
     } catch (err) {
         return res.status(500).json({ msg: 'Error inserting schedule' });
     } 
-};
+}; 
 
-exports.readSchedule = async (req, res) => {
+exports.readSchedule = async (req, res) => { 
 
     const userId = req.user.id;
     

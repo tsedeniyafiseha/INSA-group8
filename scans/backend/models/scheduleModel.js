@@ -8,7 +8,7 @@ const createSchedule = (userId, title, date, startTime, endTime) => {
             resolve(this.lastID); 
         });
     });
-};
+}; 
 
 const getSchedulesByUserId = (userId) => {
     return new Promise((resolve, reject) => {

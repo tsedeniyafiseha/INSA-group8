@@ -51,9 +51,9 @@ exports.signUP = async (req, res) => {
         const userId = await User.createUser(username, email, hashedPassword, role, createdAt, emailTokenVersion);
 
         
-        const verificationToken = generateEmailVerificationToken(email);
+        const verificationToken = generateEmailVerificationToken(email, emailTokenVersion);
         const verificationUrl = `${process.env.BACKEND_URL}/api/auth/verify-email?token=${encodeURIComponent(verificationToken)}`;
-        
+         
         try{
             await sendEmail({
                 to: email,
@@ -173,7 +173,7 @@ exports.signIn = async (req, res) => {
                     <h2>Hello ${updatedUser.username},</h2>
                     <p>You haven't verified your email yet. Click below to verify:</p>
                     <a href="${verificationUrl}" target="_blank">Verify Email</a>
-                    <p>This link will expire in 24 hours.</p>
+                    <p>This link will expire in 24 hours.</p>cls
                     `
                 });
             return res.status(403).json({ msg: 'Please verify your email before logging in.' });
